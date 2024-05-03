@@ -8,4 +8,6 @@ const execute = async (interaction) => {
   await interaction.reply('Pong!');
 };
 
-module.exports = { data, execute };
+const cooldown = 5;
+
+module.exports = { data, execute, cooldown };
