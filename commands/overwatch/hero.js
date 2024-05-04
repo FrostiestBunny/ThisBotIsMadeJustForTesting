@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { heroes } = require('../../util.js');
 
 const data = new SlashCommandBuilder()
   .setName('hero')
@@ -29,48 +30,7 @@ const execute = async (interaction) => {
 
 const autocomplete = async (interaction) => {
   const focusedValue = interaction.options.getFocused();
-  const choices = [
-    'ana',
-    'ashe',
-    'baptiste',
-    'bastion',
-    'brigitte',
-    'cassidy',
-    'doomfist',
-    'dva',
-    'echo',
-    'genji',
-    'hanzo',
-    'illari',
-    'junker-queen',
-    'junkrat',
-    'kiriko',
-    'lifeweaver',
-    'lucio',
-    'mauga',
-    'mei',
-    'mercy',
-    'moira',
-    'orisa',
-    'pharah',
-    'ramattra',
-    'reaper',
-    'reinhardt',
-    'roadhog',
-    'sigma',
-    'sojourn',
-    'soldier-76',
-    'sombra',
-    'symmetra',
-    'torbjorn',
-    'tracer',
-    'venture',
-    'widowmaker',
-    'winston',
-    'wrecking-ball',
-    'zarya',
-    'zenyatta',
-  ];
+  const choices = heroes;
   let filtered = choices.filter((choice) => choice.startsWith(focusedValue));
   if (filtered.length > 25) filtered = filtered.slice(0, 25);
   await interaction.respond(
