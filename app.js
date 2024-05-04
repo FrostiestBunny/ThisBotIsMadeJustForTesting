@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const TOKEN = process.env.TOKEN;
+const DEBUG = process.env.DEBUG === 'true' ? true : false;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -39,8 +40,10 @@ for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
   const event = require(filePath);
   if (event.once) {
+    if (DEBUG) console.log(`Adding one-time event ${event.name} from ${file}`);
     client.once(event.name, (...args) => event.execute(...args));
   } else {
+    if (DEBUG) console.log(`Adding event ${event.name} from ${file}`);
     client.on(event.name, (...args) => event.execute(...args));
   }
 }
