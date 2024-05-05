@@ -4,8 +4,6 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
   ComponentType,
 } = require('discord.js');
 const { damage_heroes, tank_heroes, support_heroes } = require('../../util.js');
@@ -15,6 +13,20 @@ const getHeroByName = async (name) => {
   const req = await fetch(url);
   const reply = await req.json();
   return reply;
+};
+
+const pickRandomHero = async (hero_pool, interaction) => {
+  const hero_name = hero_pool[Math.floor(Math.random() * hero_pool.length)];
+
+  const reply = await getHeroByName(hero_name);
+
+  const hero = new EmbedBuilder().setTitle(reply.name).setImage(reply.portrait);
+
+  if (reply.name === 'Winston') {
+    await interaction.channel.send('This is Winston');
+  }
+
+  return hero;
 };
 
 const data = new SlashCommandBuilder()
@@ -44,31 +56,7 @@ const execute = async (interaction) => {
     hero_pool = support_heroes;
   }
 
-  const hero_name = hero_pool[Math.floor(Math.random() * hero_pool.length)];
-
-  let reply = await getHeroByName(hero_name);
-
-  const hero = new EmbedBuilder().setTitle(reply.name).setImage(reply.portrait);
-
-  // const select = new StringSelectMenuBuilder()
-  //   .setCustomId('role')
-  //   .setPlaceholder('Choose the role')
-  //   .addOptions(
-  //     new StringSelectMenuOptionBuilder()
-  //       .setLabel('Tank')
-  //       .setValue('tank')
-  //       .setDefault(subCommand === 'tank'),
-  //     new StringSelectMenuOptionBuilder()
-  //       .setLabel('Damage')
-  //       .setValue('damage')
-  //       .setDefault(subCommand === 'damage'),
-  //     new StringSelectMenuOptionBuilder()
-  //       .setLabel('Support')
-  //       .setValue('support')
-  //       .setDefault(subCommand === 'support')
-  //   );
-
-  // const row1 = new ActionRowBuilder().addComponents(select);
+  const hero = await pickRandomHero(hero_pool, interaction);
 
   const reroll = new ButtonBuilder()
     .setCustomId('reroll')
@@ -89,13 +77,7 @@ const execute = async (interaction) => {
 
   collector.on('collect', async (i) => {
     if (i.user.id === interaction.user.id) {
-      const new_hero_name =
-        hero_pool[Math.floor(Math.random() * hero_pool.length)];
-      reply = await getHeroByName(new_hero_name);
-
-      const new_hero = new EmbedBuilder()
-        .setTitle(reply.name)
-        .setImage(reply.portrait);
+      const new_hero = await pickRandomHero(hero_pool, i);
       await i.update({ embeds: [new_hero] });
     } else {
       await i.reply({
