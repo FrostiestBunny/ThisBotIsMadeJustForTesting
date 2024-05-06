@@ -1,11 +1,21 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const {
+  ActivityType,
+  Client,
+  Collection,
+  GatewayIntentBits,
+} = require('discord.js');
 const TOKEN = process.env.TOKEN;
 const DEBUG = process.env.DEBUG === 'true' ? true : false;
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+  presence: {
+    activities: [{ name: 'you sleep', type: ActivityType.Watching }],
+  },
+});
 
 client.commands = new Collection();
 client.cooldowns = new Collection();
